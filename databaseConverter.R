@@ -44,6 +44,8 @@ cleanarticles <- articles %>%
 cleanarticles %>% mutate(path2 = factor(Path)) %>% count(path2) %>% arrange(-n) %>% View()
 
 
+write_rds(cleanarticles, "articles.rds")
+
 x <- runif(1,1,1000)
 example <- cleanarticles[x,]
 

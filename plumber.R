@@ -4,30 +4,95 @@ library(recommenderlab)
 library(tidyverse)
 
 
-possible_recommenders <- c("POPULAR", "IBCF")
+possible_recommenders <- c("POPULAR", "IBCF", "UBCF", "SVD")
 user_data <- tibble(userid = 0L, recommender = possible_recommenders[1])
-
-data(Jester5k)
-set.seed(1234)
-r <- sample(Jester5k, 5000)
-r <- Recommender(Jester5k[1:1000], method = "UBCF")
-getModel(r)$topN
+articles <- read_rds("articles.rds")
 
 
 
 
 
-#' Echo the parameter that was sent in
-#' @param num number of jokes
-#' @get /echo
-#' @json
-function(num = 3){
-  recom <- predict(r, Jester5k[1001:1001], n=num)
-  jokes <- as(recom, "list")
-  jokelist <- JesterJokes[jokes[[1]]]
+m <- new_rating_matrix()
+
+
+
+# DEBUG STUFF -----
+
+if(FALSE) {
   
-  list(headline="Joke", msg = jokelist)
+  
+
+  for (i in 1:length(articles$ID_Article)) {
+    m <- m %>% add_rating("DEMO",
+                          as.character(articles$ID_Article[i]),
+                          0)
+  }
+  
+  store_user_ratings(m)
+  getRatingMatrix(m)
+  
+  rec <- Recommender(m, method = "SVD")
+  names(getModel(rec))
+  
+  
+  recom <- predict(rec, m["u3", ], n = 3)
+  
+  recs <- as(recom, "list")
+  
+  article_id <- recs[[1]] %>% as.numeric()
+  
+  #get first recommendation
+  articles %>% filter(ID_Article %in% article_id)
+  
+  
+  bm <- microbenchmark(write = {
+    store_user_ratings(m)
+  },
+  read = {
+    m <- read_user_ratings()
+  })
+  autoplot(bm)
+  
+  
+  HybridRecommender(
+    Recommender(m, method = "POPULAR"),
+    Recommender(m, method = "RANDOM"),
+    Recommender(m, method = "RERECOMMEND"),
+    weights = c(.6, .1, .3)
+  )
+  dimnames(Bs) = list(rows,columns)
+  
+  dimnames(m)
+  M <- matrix(rep(0,10), nrow = 1, ncol = 10)
 }
+
+
+
+
+new_rating_matrix <- function(){
+  entry <- data.frame(user = character(0L), item = character(0L), rating = numeric(0L), stringsAsFactors = F)
+  entry %>% as("realRatingMatrix")
+}
+
+add_rating <- function(m, user_id, item_id, rating){
+  df <- m %>%  as("data.frame") 
+  if(length(df) == 0){
+    df <- data.frame(user = character(0L), item = character(0L), rating = numeric(0L), stringsAsFactors = F)
+  }
+  entry <- data.frame(user = user_id, item = item_id, rating = rating, stringsAsFactors = F)
+  df %>% bind_rows(entry) %>% as("realRatingMatrix")
+}
+
+
+
+store_user_ratings <- function(m){
+  m %>% as("data.frame") %>% write_rds("ratings.rds")
+}
+
+read_user_ratings <- function(){
+  m <- read_rds("ratings.rds") %>% as("realRatingMatrix")
+}
+
 
 
 #' Register a User at the recommender system
@@ -51,8 +116,25 @@ function(participantID, age, gender){
 #' @param iteration the number of recommended iterations
 #' @get /getrecommendation
 #' @json
-function(participantID, recsys, iteration){
+function(participantID, recsys = "RANDOM", iteration){
   
+  #debug
+  #participantID <- "U11"
+  #recsys <- "UBCF"
+  m <- read_user_ratings()
+  rec <- Recommender(m, method = recsys)
+  
+  if(participantID %in% as.list(rownames(m))){
+    recom <- predict(rec, m[participantID,], n=1)
+  } else {
+    rec <- Recommender(m, method = "RERECOMMEND")
+    recom <- predict(rec, m["DEMO",], n=1)
+  }
+  recs <- as(recom, "list")
+  article_id <- recs[[1]] %>% as.numeric()
+  
+  #get first recommendation
+  articles %>% filter(ID_Article %in% article_id)
 }
 
 #' Sends the rating for a given item by a user
@@ -62,6 +144,10 @@ function(participantID, recsys, iteration){
 #' @get /sendrecommendation
 #' @json
 function(participantID, itemID, rating){
+  #itemID <- "7361"
+  #rating <- 5
+  m <- m %>% add_rating(participantID, itemID, as.numeric(rating))
+  store_user_ratings(m)
   
   #Add rating to the recommender system for the given user
   #Store changes in the db
@@ -70,20 +156,15 @@ function(participantID, itemID, rating){
 }
 
 
+
+
 #' Plot out data from the iris dataset
 #' @param spec If provided, filter the data to only this species (e.g. 'setosa')
 #' @get /plot
 #' @png
 function(spec){
-  myData <- iris
-  title <- "All Species"
-  
-  # Filter if the species was specified
-  if (!missing(spec)){
-    title <- paste0("Only the '", spec, "' Species")
-    myData <- subset(iris, Species == spec)
-  }
-  
-  plot(myData$Sepal.Length, myData$Petal.Length,
-       main=title, xlab="Sepal Length", ylab="Petal Length")
+  r_m <- normalize(m)
+  getRatingMatrix(r_m)
+  image(r_m, main = "Normalized Ratings")
 }
+
