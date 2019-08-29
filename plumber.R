@@ -4,9 +4,14 @@
 library(recommenderlab)
 library(dplyr)
 library(readr)
+library(feather)
 
 # Debug
 print(local_path)
+
+read_reset_password <- function(){
+  read_file(paste0(local_path, "/password.txt"))
+}
 
 #***********************
 # storing and reading data ----
@@ -15,16 +20,21 @@ get_article_data <- function(){
 }
 
 store_user_ratings <- function(m){
-  m %>% as("data.frame") %>% write_rds(paste0(local_path,"/ratings.rds"))
+  m %>% as("data.frame") %>% write_feather(paste0(local_path,"/ratings.feather"))
 }
 
 read_user_ratings <- function(){
-  m <- read_rds(paste0(local_path,"/ratings.rds")) %>% as("realRatingMatrix")
+  if(!file.exists(paste0(local_path,"/ratings.feather"))){
+    m <- new_rating_matrix()
+  } else {
+    m <- read_feather(paste0(local_path,"/ratings.feather")) %>% as.data.frame() %>% as("realRatingMatrix")
+  }
+  m
 }
 
 #***********************
 # initialization ----
-possible_recommenders <- c("POPULAR", "IBCF", "UBCF", "SVD")
+possible_recommenders <- c("POPULAR", "IBCF", "UBCF", "SVD", "RANDOM")
 user_data <- tibble(userid = 0L, recommender = possible_recommenders[1])
 articles <- get_article_data()
 
@@ -67,7 +77,7 @@ add_rating <- function(m, user_id, item_id, rating){
 #' @param gender Gender of the participant
 #' @get /register
 #' @json
-function(participantID, age, gender){
+register <- function(participantID, age, gender){
   # Create a new user object
   # Add user to the recommemnder
   
@@ -82,7 +92,7 @@ function(participantID, age, gender){
 #' @param iteration the number of recommended iterations
 #' @get /getrecommendation
 #' @json
-function(participantID, recsys = "RANDOM", iteration){
+getrecommendation <- function(participantID, recsys = "RANDOM", iteration){
   
   #debug
   #participantID <- "U11"
@@ -109,7 +119,7 @@ function(participantID, recsys = "RANDOM", iteration){
 #' @param rating how was the item rated
 #' @get /sendrecommendation
 #' @json
-function(participantID, itemID, rating){
+sendrecommendation <- function(participantID, itemID, rating){
   #itemID <- "7361"
   #rating <- 5
   m <- read_user_ratings()
@@ -127,12 +137,21 @@ function(participantID, itemID, rating){
 #' @param spec If provided, filter the data to only this species (e.g. 'setosa')
 #' @get /plot
 #' @png
-function(spec){
+plot <- function(spec){
   m <- read_user_ratings()
   r_m <- normalize(m)
   getRatingMatrix(r_m)
   p <- image(r_m, main = "Normalized Ratings")
   print(p)
+}
+
+#' Get the text of an item
+#' @get /getitem
+#'
+#' @param itemID ID of the recommended item
+#' @json
+getitem <- function(itemID){
+  articles %>% filter(ID_Article %in% article_id)
 }
 
 
@@ -142,3 +161,20 @@ function(spec){
 alive <- function(){
   "Server is alive."
 }
+
+
+#' Test whether the service is alive
+#' @get /reset
+#' @param password 
+#' @json
+reset <- function(password){
+  
+  if(password==read_reset_password()){
+    m <- read_user_ratings()
+    m %>% as("data.frame") %>% filter(user == "DEMO") %>% store_user_ratings()
+    return("Reset")
+  }
+  return("")
+}
+
+
