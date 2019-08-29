@@ -19,7 +19,7 @@ store_user_ratings <- function(m){
 }
 
 read_user_ratings <- function(){
-  m <- read_rds(paste0(local_path,"/api/ratings.rds")) %>% as("realRatingMatrix")
+  m <- read_rds(paste0(local_path,"/ratings.rds")) %>% as("realRatingMatrix")
 }
 
 #***********************
