@@ -8,4 +8,4 @@ local_path <- "/api"
 pr <- plumber::plumb(paste0(local_path,"/plumber.R"))
 pr$routes
 
-pr$run(port = 8000, host="0.0.0.0")
+pr$run(port = 80, host="0.0.0.0")

@@ -25,7 +25,7 @@ RUN install2.r feather
 
 # open port 80 to traffic
 EXPOSE 80
-EXPOSE 8080
+EXPOSE 8000
 
 # when the container starts, start the main.R script
 # ENTRYPOINT ["Rscript", "serv.r"]
