@@ -1,7 +1,8 @@
 # plumber.R
 
 library(recommenderlab)
-library(tidyverse)
+library(dplyr)
+library(readr)
 
 
 possible_recommenders <- c("POPULAR", "IBCF", "UBCF", "SVD")
@@ -12,7 +13,7 @@ articles <- read_rds("articles.rds")
 
 
 
-m <- new_rating_matrix()
+#m <- new_rating_matrix()
 
 
 
@@ -168,3 +169,10 @@ function(spec){
   image(r_m, main = "Normalized Ratings")
 }
 
+
+#' Test whether the service is alive
+#' @get /alive
+#' @json
+function(){
+  "Server is alive."
+}
