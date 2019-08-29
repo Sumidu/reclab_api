@@ -131,13 +131,14 @@ function(spec){
   m <- read_user_ratings()
   r_m <- normalize(m)
   getRatingMatrix(r_m)
-  image(r_m, main = "Normalized Ratings")
+  p <- image(r_m, main = "Normalized Ratings")
+  print(p)
 }
 
 
 #' Test whether the service is alive
 #' @get /alive
 #' @json
-function(){
+alive <- function(){
   "Server is alive."
 }
