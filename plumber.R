@@ -87,11 +87,11 @@ add_rating <- function(m, user_id, item_id, rating){
 
 
 store_user_ratings <- function(m){
-  m %>% as("data.frame") %>% write_rds("ratings.rds")
+  m %>% as("data.frame") %>% write_rds("/api/ratings.rds")
 }
 
 read_user_ratings <- function(){
-  m <- read_rds("ratings.rds") %>% as("realRatingMatrix")
+  m <- read_rds("/api/ratings.rds") %>% as("realRatingMatrix")
 }
 
 
