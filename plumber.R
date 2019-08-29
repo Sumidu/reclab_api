@@ -7,7 +7,7 @@ library(readr)
 
 possible_recommenders <- c("POPULAR", "IBCF", "UBCF", "SVD")
 user_data <- tibble(userid = 0L, recommender = possible_recommenders[1])
-articles <- read_rds("articles.rds")
+articles <- read_rds("/api/articles.rds")
 
 
 
