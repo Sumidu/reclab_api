@@ -147,6 +147,7 @@ function(participantID, recsys = "RANDOM", iteration){
 function(participantID, itemID, rating){
   #itemID <- "7361"
   #rating <- 5
+  m <- read_user_ratings()
   m <- m %>% add_rating(participantID, itemID, as.numeric(rating))
   store_user_ratings(m)
   
@@ -164,6 +165,7 @@ function(participantID, itemID, rating){
 #' @get /plot
 #' @png
 function(spec){
+  m <- read_user_ratings()
   r_m <- normalize(m)
   getRatingMatrix(r_m)
   image(r_m, main = "Normalized Ratings")
