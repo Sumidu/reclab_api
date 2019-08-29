@@ -10,7 +10,9 @@ library(feather)
 print(local_path)
 
 read_reset_password <- function(){
-  read_file(paste0(local_path, "/password.txt"))
+  passw <- read_file(paste0(local_path, "/password.txt"))
+
+  substr(passw, 1, nchar(passw)-1)
 }
 
 #***********************
