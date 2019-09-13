@@ -37,7 +37,7 @@ cleanarticles <- articles %>%
            format("%d. %b %Y")) %>% 
   rowwise() %>% 
   mutate(subheading = get_h2_header(Body)) %>% 
-  mutate(cleanbody = strip_html(Body)) 
+  mutate(cleanbody = get_p_elems(Body,2))
 
 
 # Debug get all Types
