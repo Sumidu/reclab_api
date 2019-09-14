@@ -153,7 +153,7 @@ plot <- function(spec){
 #' @param itemID ID of the recommended item
 #' @json
 getitem <- function(itemID){
-  articles %>% filter(ID_Article %in% article_id)
+  articles %>% filter(ID_Article %in% itemID)
 }
 
 
