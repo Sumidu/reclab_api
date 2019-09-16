@@ -56,6 +56,7 @@ new_rating_matrix <- function(){
 # add a rating to an existing rating matrix
 add_rating <- function(m, user_id, item_id, rating){
   
+  print(paste("add_rating - user_id:", user_id, ", item_id", item_id, ", rating", rating))
   #user_id = "test"
   #item_id = "testi"
   #rating = 5
@@ -89,7 +90,7 @@ register <- function(participantID, age, gender){
   # Create a new user object
   # Add user to the recommemnder
   
-  print(paste(participantID, age, gender))
+  print(paste("register - participantID: ", participantID, ", age: ", age, ", gender:", gender))
   
   "success"
 }
@@ -102,6 +103,7 @@ register <- function(participantID, age, gender){
 #' @json
 getrecommendation <- function(participantID, recsys = "RANDOM", iteration){
   
+  print(paste("getrecommendation - participant_ID:", participantID, ", recsys:", recsys, ", iteration", iteration))
   #debug
   #participantID <- "U11"
   #recsys <- "UBCF"
@@ -117,6 +119,7 @@ getrecommendation <- function(participantID, recsys = "RANDOM", iteration){
   recs <- as(recom, "list")
   article_id <- recs[[1]] %>% as.numeric()
   
+  print(paste("getrecommendation(return) - articleID:", article_id))
   #get first recommendation
   articles %>% filter(ID_Article %in% article_id)
 }
@@ -131,6 +134,7 @@ sendrecommendation <- function(participantID, itemID, rating){
   #itemID <- "7361"
   #rating <- "5"
   #participantID = "12"
+  print(paste("sendrecommendation - participantID: ", participantID, ", itemID", item_id, ", rating:", rating))
   m <- read_user_ratings()
   m <- m %>% add_rating(participantID, itemID, as.numeric(rating))
   store_user_ratings(m)
