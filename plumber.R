@@ -115,7 +115,7 @@ getrecommendation <- function(participantID, recsys = "RANDOM", iteration = 1){
     maxiter    = 100,           ## max. number of SVD iterations
     normalize  = "center"      ## rows
   )
-  rec <- Recommender(m, method = recsys, parameter=REAL_SVD_param)
+  rec <- Recommender(m, method = recsys) #, parameter=REAL_SVD_param)
   
   if(participantID %in% as.list(rownames(m))){
     recom <- predict(rec, m[participantID,], n=1)
