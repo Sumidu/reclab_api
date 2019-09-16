@@ -101,7 +101,7 @@ register <- function(participantID, age, gender){
 #' @param iteration the number of recommended iterations
 #' @get /getrecommendation
 #' @json
-getrecommendation <- function(participantID, recsys = "RANDOM", iteration){
+getrecommendation <- function(participantID, recsys = "RANDOM", iteration = 1){
   
   print(paste("getrecommendation - participant_ID:", participantID, ", recsys:", recsys, ", iteration", iteration))
   #debug
