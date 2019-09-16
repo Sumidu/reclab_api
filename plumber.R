@@ -106,9 +106,16 @@ getrecommendation <- function(participantID, recsys = "RANDOM", iteration = 1){
   print(paste("getrecommendation - participant_ID:", participantID, ", recsys:", recsys, ", iteration", iteration))
   #debug
   #participantID <- "U11"
-  #recsys <- "UBCF"
+  #recsys <- "SVD"
   m <- read_user_ratings()
-  rec <- Recommender(m, method = recsys)
+  
+  ## TODO see count of users.. only run SVD if users > k
+  REAL_SVD_param <- list(
+    k = 10,                     ## rank of approximation
+    maxiter    = 100,           ## max. number of SVD iterations
+    normalize  = "center"      ## rows
+  )
+  rec <- Recommender(m, method = recsys, parameter=REAL_SVD_param)
   
   if(participantID %in% as.list(rownames(m))){
     recom <- predict(rec, m[participantID,], n=1)
