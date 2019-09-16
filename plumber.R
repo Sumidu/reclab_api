@@ -134,7 +134,7 @@ sendrecommendation <- function(participantID, itemID, rating){
   #itemID <- "7361"
   #rating <- "5"
   #participantID = "12"
-  print(paste("sendrecommendation - participantID: ", participantID, ", itemID", item_id, ", rating:", rating))
+  print(paste("sendrecommendation - participantID: ", participantID, ", itemID", itemID, ", rating:", rating))
   m <- read_user_ratings()
   m <- m %>% add_rating(participantID, itemID, as.numeric(rating))
   store_user_ratings(m)
