@@ -55,7 +55,13 @@ new_rating_matrix <- function(){
 
 # add a rating to an existing rating matrix
 add_rating <- function(m, user_id, item_id, rating){
+  
+  #user_id = "test"
+  #item_id = "testi"
+  #rating = 5
   df <- m %>%  as("data.frame") 
+  df$user <- as.character(df$user)
+  df$item <- as.character(df$item)
   if(length(df) == 0){
     df <- data.frame(user = character(0L), item = character(0L), rating = numeric(0L), stringsAsFactors = F)
   }
@@ -123,7 +129,8 @@ getrecommendation <- function(participantID, recsys = "RANDOM", iteration){
 #' @json
 sendrecommendation <- function(participantID, itemID, rating){
   #itemID <- "7361"
-  #rating <- 5
+  #rating <- "5"
+  #participantID = "12"
   m <- read_user_ratings()
   m <- m %>% add_rating(participantID, itemID, as.numeric(rating))
   store_user_ratings(m)
