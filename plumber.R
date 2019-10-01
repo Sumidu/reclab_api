@@ -109,6 +109,14 @@ getrecommendation <- function(participantID, recsys = "RANDOM", iteration = 1){
   #recsys <- "SVD"
   m <- read_user_ratings()
   
+  if(recsys == "RANDOM"){
+    ml <- m %>% as("list")
+    possible_ids <- as.data.frame(ml$DEMO %>% names())
+    names(possible_ids) <- c("id")
+    value <- sample_n(possible_ids, 1) %>% pull(id) %>% as.integer()
+    return(value)
+  }
+  
   # count of users.. only run SVD if users > k
   REAL_SVD_param <- list(
     k = 10,                     ## rank of approximation
