@@ -9,6 +9,8 @@ library(feather)
 # Debug
 print(local_path)
 
+file_name_feather <- "/ratings_comments.feather"
+
 read_reset_password <- function(){
   passw <- read_file(paste0(local_path, "/password.txt"))
 
@@ -22,14 +24,14 @@ get_article_data <- function(){
 }
 
 store_user_ratings <- function(m){
-  m %>% as("data.frame") %>% write_feather(paste0(local_path,"/ratings.feather"))
+  m %>% as("data.frame") %>% write_feather(paste0(local_path, file_name_feather))
 }
 
 read_user_ratings <- function(){
-  if(!file.exists(paste0(local_path,"/ratings.feather"))){
+  if(!file.exists(paste0(local_path, file_name_feather))){
     m <- new_rating_matrix()
   } else {
-    m <- read_feather(paste0(local_path,"/ratings.feather")) %>% as.data.frame() %>% as("realRatingMatrix")
+    m <- read_feather(paste0(local_path, file_name_feather)) %>% as.data.frame() %>% as("realRatingMatrix")
   }
   m
 }
