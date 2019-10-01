@@ -99,13 +99,7 @@ register <- function(participantID, age, gender){
 
 
 getRandomRec <- function(){
-  m <- read_user_ratings()
-  ml <- m %>% as("list")
-  possible_ids <- as.data.frame(ml$DEMO %>% names())
-  names(possible_ids) <- c("id")
-  value <- sample_n(possible_ids, 1) %>% pull(id) %>% as.integer()
-  print(paste("getRandomRec", value))
-  articles %>% filter(ID_Article == value)
+  sample_n(articles,1) 
 }
 
 #' Gets a recommendation for the specified recsys
