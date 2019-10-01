@@ -113,7 +113,7 @@ getRandomRec <- function(){
 #' @param count_recs the number of recommendations to get
 #' @get /getrecommendation
 #' @json
-getrecommendation <- function(participantID, recsys = "RANDOM", iteration = 1, count_recs = 3){
+getrecommendation <- function(participantID, recsys = "RANDOM", iteration = 1, count_recs = 1){
   
   print(paste("getrecommendation - participant_ID:", participantID, ", recsys:", recsys, ", iteration", iteration, ", count", count_recs))
   #debug
