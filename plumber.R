@@ -99,6 +99,7 @@ register <- function(participantID, age, gender){
 
 
 getRandomRec <- function(){
+  m <- read_user_ratings()
   ml <- m %>% as("list")
   possible_ids <- as.data.frame(ml$DEMO %>% names())
   names(possible_ids) <- c("id")
