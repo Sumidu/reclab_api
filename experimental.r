@@ -3,7 +3,7 @@ if(FALSE) {
   
   for (i in 1:length(articles$ID_Article)) {
     m <- m %>% add_rating("DEMO",
-                          as.character(articles$ID_Article[i]),
+                          as.character(articles[i,1]),
                           0)
   }
   

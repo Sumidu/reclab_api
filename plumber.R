@@ -61,11 +61,11 @@ add_rating <- function(m, user_id, item_id, rating){
   #item_id = "testi"
   #rating = 5
   df <- m %>%  as("data.frame") 
-  df$user <- as.character(df$user)
-  df$item <- as.character(df$item)
   if(length(df) == 0){
     df <- data.frame(user = character(0L), item = character(0L), rating = numeric(0L), stringsAsFactors = F)
   }
+  df$user <- as.character(df$user)
+  df$item <- as.character(df$item)
   entry <- data.frame(user = user_id, item = item_id, rating = rating, stringsAsFactors = F)
   df %>% bind_rows(entry) %>% as("realRatingMatrix")
 }
@@ -201,7 +201,7 @@ alive <- function(){
 reset <- function(password){
   
   if(password==read_reset_password()){
-    m <- read_user_ratings()
+    m <- read_feather(paste0(local_path,"/ratings_DEMO.feather")) %>% as.data.frame() %>% as("realRatingMatrix")
     m %>% as("data.frame") %>% filter(user == "DEMO") %>% store_user_ratings()
     return("Reset")
   }
