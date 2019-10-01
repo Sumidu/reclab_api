@@ -99,7 +99,9 @@ register <- function(participantID, age, gender){
 
 
 getRandomRec <- function(){
-  sample_n(articles,1) 
+  case_now <- sample_n(articles,1)
+  print(paste("random Rec", case_now$ID_Article[1]))
+  case_now
 }
 
 #' Gets a recommendation for the specified recsys
